@@ -113,7 +113,7 @@ exports.signUp = async (req,res) => {
             firstName,lastName,email,contactNumber,
             password:hashPassword,
             accountType,
-            additionalDetails:ProfileDetails,
+            additionalDetails:ProfileDetails._id,
             image:`https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`,
         });
         return res.status(200).json({
@@ -130,6 +130,13 @@ exports.signUp = async (req,res) => {
         }
     }
 //login
+exports.login = async(req,res) => {
+    try {
+        
+    } catch (error) {
+        
+    }
+}
 
 
 //change password 
