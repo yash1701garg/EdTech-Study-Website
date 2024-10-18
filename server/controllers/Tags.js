@@ -1,7 +1,7 @@
 const Tag = require("../models/Tag");
 
 //create Tag ka handler function
-exports. createTag = async(req, res)=>{
+exports.createTag = async(req, res)=>{
     try{
         //fetch data
         const {name, description}=req.body;
@@ -40,7 +40,7 @@ exports.showAlltags = async (req, res)=>{
         const allTags = await Tag.find({},{name:true, description:true});
         res.status(200).json({
             success:true,
-            message:"All tags required successfully",
+            message:"All tags returned successfully",
             allTags,
         })
     } catch (error) {
