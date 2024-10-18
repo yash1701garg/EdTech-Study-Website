@@ -70,6 +70,16 @@ exports.createCourse = async (req, res) => {
 
         //update the TAG ka schema
         //TODO:HW
+        const updatedTags = await Tag.findByIdAndUpdate(
+            {_id:tag},
+            {
+                $push:{
+                    course:newCourse._id,
+                }
+            },
+            {new:true},
+        );
+        console.log("Updated Tags are ",updatedTags);
 
         //return response
         return res.status(200).json({
