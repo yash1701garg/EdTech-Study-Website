@@ -1,5 +1,5 @@
 const Course = require("../models/Course");
-const Tag = require("../models/Tag");
+const Category = require('../models/Category');
 const User = require("../models/User");
 const { uploadImageToCloudinary } = require("../utils/imageUploader");
 
@@ -35,8 +35,8 @@ exports.createCourse = async (req, res) => {
         }
 
         //check given tag is valid or not
-        const tagDetails = await Tag.findById(tag);
-        if (!tagDetails) {
+        const categoryDetails = await Category.findById(tag);
+        if (!categoryDetails) {
             return res.status(404).json({
                 success: false,
                 message: 'Tag Details not found',
@@ -53,7 +53,7 @@ exports.createCourse = async (req, res) => {
             instructor: instructorDetails._id,
             whatWillYouLearn: whatYouWillLearn,
             price,
-            tag: tagDetails._id,
+            category: categoryDetails._id,
             thumbnail: thumbnailImage.secure_url,
         })
 
@@ -70,7 +70,7 @@ exports.createCourse = async (req, res) => {
 
         //update the TAG ka schema
         //TODO:HW
-        const updatedTags = await Tag.findByIdAndUpdate(
+        const updatedCategory = await Category.findByIdAndUpdate(
             {_id:tag},
             {
                 $push:{
@@ -79,7 +79,7 @@ exports.createCourse = async (req, res) => {
             },
             {new:true},
         );
-        console.log("Updated Tags are ",updatedTags);
+        console.log("Updated Tags are ",updatedCategory);
 
         //return response
         return res.status(200).json({

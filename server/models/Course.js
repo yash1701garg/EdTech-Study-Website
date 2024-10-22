@@ -34,14 +34,21 @@ const mongoose = require('mongoose');
         type:String,
       },
       tag:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Tag",
-      },
-      studentEnrolled:{
-        type:mongoose.Schema.Types.ObjectId,
+        type:[String],
         required:true,
-        ref:"User",
       },
+      category: {
+        type: mongoose.Schema.Types.ObjectId,
+        // required: true,
+        ref: "Category",
+      },
+      studentEnrolled:[
+        {
+          type:mongoose.Schema.Types.ObjectId,
+          required:true,
+          ref:"User",
+        }
+      ],
  });
 
  module.exports = mongoose.model("Course",courseSchema);
