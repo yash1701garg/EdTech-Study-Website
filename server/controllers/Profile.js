@@ -1,4 +1,4 @@
-const Profile = require('../models/Profile');
+ const Profile = require('../models/Profile');
 const User = require('../models/User');
 
 exports.updateProfile = async (req,res) => {
@@ -33,10 +33,11 @@ exports.updateProfile = async (req,res) => {
         return res.status(200).json({
            success:true,
            message:'Profile updated successfully!!!',
-        })
+           profileDetails,
+        });
         
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
 			success: false,
 			message: "Unable to update profile, please try again later",
 			error: error.message,
@@ -70,7 +71,7 @@ exports.deleteProfile = async (req,res) => {
             message: "User deleted successfully",
           })
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
 			success: false,
 			message: "Unable to delete account, please try again later",
 			error: error.message,
@@ -94,7 +95,7 @@ exports.getAllUserDetails = async (req,res) => {
         });
 
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
 			success: false,
 			message: "Not found",
 			error: error.message,
