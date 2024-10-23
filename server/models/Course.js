@@ -49,6 +49,13 @@ const mongoose = require('mongoose');
           ref:"User",
         }
       ],
+      instruction:{
+        type:[String]
+      },
+      status:{
+        type:String,
+        enum:["Draft","Published"],
+      }
  });
 
  module.exports = mongoose.model("Course",courseSchema);

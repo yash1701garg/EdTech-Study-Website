@@ -43,3 +43,42 @@ exports.showAllCategories = async (req, res) => {
 		});
 	}
 };
+
+exports.categoryPageDetails = async (req,res) => {
+	try {
+		//fetch the id 
+		const {categoryId} = req.body;
+		//get courses for specified category
+		const selectedCategory = await Category.findById(categoryId).populate("courses").exec();
+		//validation
+		if (!selectedCategory){
+			return res
+				.status(404)
+				.json({ success: false, message: "Category not found" });
+		}
+		//get courses for different categories
+		const differentCategories = await Category.find({_id:{$ne:categoryId}})
+                                                  .populate("courses").exec();
+	   const allCategories = await Category.find({}).populate("courses").exec();
+		//get top selling courses
+		const allCourses = allCategories.flatMap((category) => category.courses);
+		const mostSellingCourses = allCourses
+			.sort((a, b) => b.sold - a.sold)
+			.slice(0, 10);
+
+		//return response
+		res.status(200).json({
+			selectedCourses: selectedCourses,
+			differentCategories: differentCategories,
+			mostSellingCourses: mostSellingCourses,
+			success: true,
+		});
+
+	} catch (error) {
+		return res.status(500).json({
+			success: false,
+			message: "Internal server error",
+			error: error.message,
+		});
+	}
+}
