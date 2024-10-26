@@ -1,42 +1,60 @@
 const express = require('express');
 const app = express();
-const cookieParser = require('cookie-parser');
-const { dbConnect } = require('./config/database');
-require('dotenv').config();
-const fileUpload = require('express-fileupload');
-const { cloudinaryConnect } = require('./config/cloudinary');
+
+const userRoutes = require('./routes/User');
 const profileRoutes = require('./routes/Profile');
 const paymentRoutes = require('./routes/Payment');
-const userRoutes = require('./routes/User');
+const courseRoutes = require('./routes/')
 
+const database = require('./config/database');
+const cookieParser = require('cookie-parser');
+const cors = require("cors");
+const { cloudinaryConnect } = require('./config/cloudinary');
+const fileUpload = require('express-fileupload');
+const dotenv = require('dotenv');
+
+dotenv.config();
+const PORT = process.env.PORT || 4000;
+
+//database connect
+database.dbConnect()
+//middlewares
 app.use(express.json());
+app.use(cookieParser());
+app.use(
+    cors({
+        origin: "http://localhost:3000",
+        credentials:true,
+    })
+);
 
-app.use(cookieParser);
-
-//routes define
-app.use("/api/v1/profile",profileRoutes);
-app.use("/api/v1/payment",paymentRoutes)
-app.use("/api/v1/user",userRoutes);
-
-
-
-dbConnect();
-
-//file upload connection
-app.use(fileUpload({
+app.use(
+    fileUpload({
     useTempFiles : true,
-    tempFileDir : '/tmp/'
-}));
+    tempFileDir : '/tmp/',
+ })
+);
+//coludinary connection
 cloudinaryConnect();
 
+//routes
+app.use("/api/v1/auth",userRoutes);
+app.use("/api/v1/profile",profileRoutes);
+app.use("/api/v1/course",courseRoutes);
+app.use("/api/v1/payment",paymentRoutes);
 
-const PORT = process.env.PORT || 4000;
-app.listen(PORT,()=>{
-    console.log(`App is listening at ${PORT}`);
-})
+
+//def route
 
 app.get('/',(req,res)=>{
-    res.send('hello world');
-})
+    return res.json({
+        success: true,
+        message: "Your server is up and reunning...",
+    })
+});
+
+app.listen(PORT,()=>{
+    console.log(`App is listening at ${PORT}`);
+});
 
 

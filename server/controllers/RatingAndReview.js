@@ -1,4 +1,4 @@
-const RatingAndReview = require('../models/RatingAndReview');
+ const RatingAndReview = require('../models/RatingAndReview');
 const Course = require('../models/Course');
 const mongoose = require('mongoose');
 
@@ -9,9 +9,10 @@ exports.createRating = async (req,res) => {
         const userId = req.user.id;
         const {courseId,rating,review} = req.body;
         //find the course details
-        const courseDetails = await Course.find({_id:courseId,
-            studentEnrolled:{$elemMatch:{$eq:userId}} //check the student enrolled id 
-        });
+        const courseDetails = await Course.findOne(
+                                    {_id:courseId,
+                                    studentEnrolled:{$elemMatch:{$eq:userId}} //check the student enrolled id 
+                                 });
         //validation
         if(!courseDetails){
             return res.status(400).json({
@@ -72,7 +73,7 @@ exports.getAverageRating = async (req,res) => {
                 {
                     $match:{
                         course : new mongoose.Types.ObjectId(courseId),
-                    }
+                    },
                 },
                 {
                     $group:{
@@ -83,23 +84,24 @@ exports.getAverageRating = async (req,res) => {
             ]
         );
         //return average rating response
-        if(res.length > 0){
+        if(result.length > 0){
             return res.status(200).json({
-              averageRating:res[0].averageRating
-            })
+                success:true,
+                averageRating: result[0].averageRating,
+            });
         }
         else{
             return res.status(200).json({
                message:"Average rating is 0",
                averageRating:0,
-              })
+              });
         }
         
     } catch (error) {
         console.log(error);
-        res.status(500).json({
+        res.status(500).json({ 
         success:false,
-        message: error.message
+        message: error.message,
     }); 
     }
 }
@@ -109,7 +111,7 @@ exports.getAllRating = async (req,res) => {
     try {
         //get the all data and sorted
         const allReviews = await RatingAndReview.find({})
-                           .sort({rating:-1})
+                           .sort({rating:"desc"}) 
                            .populate(
                             {path:"user",
                               select : "firstName lastName email image" //select only things which needs to show 

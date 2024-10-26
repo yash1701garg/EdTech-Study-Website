@@ -99,7 +99,7 @@ exports.createCourse = async (req, res) => {
 
 //getAllCourses handler function
 
-exports.showAllCourses = async (req, res) => {
+exports.getAllCourses = async (req, res) => {
     try {
         //TODO: Change the below statement invrementally
         const allCourses = await Course.find({});
@@ -119,37 +119,51 @@ exports.showAllCourses = async (req, res) => {
             error: error.message,
         })
     }
-}
+};
 
 //get all details from a course
 exports.getCourseDetails = async (req,res) => {
     try {
         const {courseId} = req.body;
         //find the course details
-        const courseDetails = await Course.find({_id:courseId}).populate({path:"instructor",
-            populate:{path:"additionalDetails"}
-        }).populate("category").populate("ratingAndReview").populate({
-            path:"courseContent",
-            populate:{path:"subSection"}
-        }).exec();
+        const courseDetails = await Course.find(
+                                               {_id:courseId})
+                                               .populate(
+                                                {
+                                                    path:"instructor",
+                                                    populate:{
+                                                        path:"additionalDetails"
+                                                    },
+                                                }
+                                            )
+                                            .populate("category")
+                                            .populate("ratingAndReview")
+                                            .populate({
+                                                    path:"courseContent",
+                                                    populate:{
+                                                        path:"subSection"
+                                                    },
+                                            })
+                                            .exec();
         if(!courseDetails){
             return res.status(400).json({
                 success:false,
                 message:`Could not find course with id: ${courseId}`,
-            })
+            });
         }
+        //return response
         return res.status(200).json({
             success:true,
             message:"Course fetched successfully now",
             data:courseDetails,
-        })
+        });
     } catch (error) {
         console.log(error);
         return res.status(500).json({
             success: false,
             message: 'Cannot Fetch course data',
             error: error.message,
-        })
+        });
     }
     
-}
+};  
