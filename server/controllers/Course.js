@@ -7,13 +7,13 @@ const { uploadImageToCloudinary } = require("../utils/imageUploader");
 exports.createCourse = async (req, res) => {
     try {
         //ferch data
-        const { courseName, courseDescription, whatYouWillLearn, price, tag } = req.body;
+        const { courseName, courseDescription, whatYouWillLearn, price, category , tag} = req.body;
 
         //get thumbnail
         const thumbnail = req.files.thumbnailImage;
 
         //validation
-        if (!courseName || !courseDescription || !whatYouWillLearn || !price || !tag || !thumbnail) {
+        if (!courseName || !courseDescription || !whatYouWillLearn || !price || !category || !thumbnail) {
             return res.status(400).json({
                 success: false,
                 message: 'All fields are required',
@@ -35,7 +35,7 @@ exports.createCourse = async (req, res) => {
         }
 
         //check given tag is valid or not
-        const categoryDetails = await Category.findById(tag);
+        const categoryDetails = await Category.findById(category);
         if (!categoryDetails) {
             return res.status(404).json({
                 success: false,
@@ -52,7 +52,7 @@ exports.createCourse = async (req, res) => {
             courseDescription,
             instructor: instructorDetails._id,
             whatWillYouLearn: whatYouWillLearn,
-            price,
+            price,tag,
             category: categoryDetails._id,
             thumbnail: thumbnailImage.secure_url,
         })
@@ -71,7 +71,7 @@ exports.createCourse = async (req, res) => {
         //update the TAG ka schema
         //TODO:HW
         const updatedCategory = await Category.findByIdAndUpdate(
-            {_id:tag},
+            {_id:category},
             {
                 $push:{
                     course:newCourse._id,
@@ -79,7 +79,7 @@ exports.createCourse = async (req, res) => {
             },
             {new:true},
         );
-        console.log("Updated Tags are ",updatedCategory);
+        console.log("Updated Category are ",updatedCategory);
 
         //return response
         return res.status(200).json({
@@ -137,7 +137,7 @@ exports.getCourseDetails = async (req,res) => {
                                                 }
                                             )
                                             .populate("category")
-                                            .populate("ratingAndReview")
+                                            //.populate("ratingAndReview")
                                             .populate({
                                                     path:"courseContent",
                                                     populate:{

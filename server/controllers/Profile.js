@@ -9,13 +9,14 @@ exports.updateProfile = async (req,res) => {
         const userId = req.user.id;
 
         //find profile by id
-        const userDetails = await User.findById(Id);
+        const userDetails = await User.findById(userId);
         const profile = await Profile.findById(userDetails.additionalDetails);
 
         //update profile fields
-        profileDetails.dateOfBirth = dateOfBirth;
-        profieDetails.about = about;
-        profieDetails.contactNumber = contactNumber;
+        profile.dateOfBirth = dateOfBirth;
+        profile.about = about;
+        profile.contactNumber = contactNumber;
+        profile.gender = gender;
 
         //save the upload profile
         await profile.save();
@@ -51,7 +52,7 @@ exports.deleteAccount = async (req,res) => {
               })
         }
         //delete Assosiated Profile with the User
-        await Profile.findByIdAndDelete({_id: user.userDetails});
+        await Profile.findByIdAndDelete({_id: user.additionalDetails});
 
         //TODO :  HOMEWORK ->Unenrolled user from enrolled course
 
@@ -86,6 +87,7 @@ exports.getAllUserDetails = async (req,res) => {
         res.status(200).json({
             success:true,
             message:'Get all user details successfully',
+            data:userDetails
         });
 
     } catch (error) {
@@ -94,4 +96,34 @@ exports.getAllUserDetails = async (req,res) => {
 			message: error.message,
 		});
     }
+}
+
+//update profile picture controller
+exports.updateProfilePicture = async (req,res) => {
+   try{
+    const displayPicture = req.files.displayPicture
+    const userId = req.user.id
+    const image = await uploadImageToCloudinary(
+      displayPicture,
+      process.env.FOLDER_NAME,
+      1000,
+      1000
+    )
+    console.log(image)
+    const updatedProfile = await User.findByIdAndUpdate(
+      { _id: userId },
+      { image: image.secure_url },
+      { new: true }
+    )
+    res.send({
+      success: true,
+      message: `Image Updated successfully`,
+      data: updatedProfile,
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    })
+  }
 }

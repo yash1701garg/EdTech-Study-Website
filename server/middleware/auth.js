@@ -56,7 +56,7 @@ exports.isAdmin = async (req,res,next) => {
     try {
         //fetch the user details 
       const userDetails = await User.findOne({email:req.user.email});
-      if(userDetails.accountType!=="Admi"){
+      if(userDetails.accountType!=="Admin"){
         return res.status(401).json({
             success: false,
             message: "This is a Protected Route for Admin",
